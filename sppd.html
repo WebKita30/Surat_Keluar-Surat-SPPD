@@ -2,6 +2,7 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sistem Cetak Surat Tugas & SPPD SMPN 3 Purwadadi</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -65,7 +66,7 @@
         border: 1px solid #7fb3d5;
         padding: 3px 10px;
         margin-bottom: 15px;
-        background-color: #d1e9ff; /* Warna biru muda */
+        background-color: #d1e9ff;
       }
 
       /* TABEL & GRID */
@@ -106,7 +107,7 @@
         height: 60px;
       }
 
-      /* UI PANEL */
+      /* UI PANEL RESPONSIVE */
       .input-panel {
         position: sticky;
         top: 0;
@@ -116,12 +117,48 @@
         padding: 15px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       }
+      .btn-action-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        justify-content: center;
+      }
       .guru-card {
         background: #f8f9fa;
         padding: 10px;
         border: 1px solid #ddd;
         border-radius: 5px;
         margin-bottom: 10px;
+      }
+
+      /* MEDIA QUERIES UNTUK HP */
+      @media (max-width: 768px) {
+        .input-panel {
+          position: relative;
+        }
+        .border-end {
+          border-end: none !important;
+          border-bottom: 1px solid #dee2e6;
+          padding-bottom: 15px;
+          margin-bottom: 10px;
+        }
+        .paper {
+          width: 100%;
+          margin: 0;
+          padding: 5mm;
+          font-size: 10px;
+          transform: scale(0.95);
+          transform-origin: top center;
+        }
+        .kop-container h4 {
+          font-size: 14px;
+        }
+        .kop-container h5 {
+          font-size: 10px;
+        }
+        .logo-kop {
+          width: 50px;
+        }
       }
 
       @media print {
@@ -182,6 +219,7 @@
               oninput="sync()"
             />
           </div>
+
           <div class="col-md-3 border-end">
             <label class="fw-bold small text-danger">KEGIATAN & TUJUAN</label>
             <textarea
@@ -200,7 +238,8 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
               oninput="sync()"
             />
           </div>
-          <div class="col-md-4">
+
+          <div class="col-md-4 border-end">
             <label class="fw-bold small text-success">DAFTAR GURU</label>
             <div id="guruContainer">
               <div class="guru-card" id="gc_0">
@@ -247,12 +286,19 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
               + Tambah Guru
             </button>
           </div>
-          <div class="col-md-2 d-flex align-items-center">
+
+          <div class="col-md-2 btn-action-group">
             <button
               onclick="window.print()"
-              class="btn btn-primary btn-lg w-100 fw-bold shadow"
+              class="btn btn-primary fw-bold shadow-sm py-2"
             >
-              CETAK
+              🖨️ CETAK SURAT
+            </button>
+            <button
+              class="btn btn-outline-secondary shadow-sm py-2"
+              onclick="window.location.href = 'SuratKeluar.HTML'"
+            >
+              ⬅️ KEMBALI
             </button>
           </div>
         </div>
@@ -264,15 +310,14 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
     <script>
       function addGuru() {
         const id = Date.now();
-        const html = `
-                <div class="guru-card" id="gc_${id}">
-                    <div class="row g-1">
-                        <div class="col-6"><input type="text" class="form-control form-control-sm inNamaG" placeholder="Nama Guru" oninput="sync()"></div>
-                        <div class="col-6"><input type="text" class="form-control form-control-sm inNIPG" placeholder="NIP" oninput="sync()"></div>
-                        <div class="col-10 mt-1"><input type="text" class="form-control form-control-sm inPangkatG" placeholder="Pangkat/Gol" oninput="sync()"></div>
-                        <div class="col-2 mt-1"><button class="btn btn-danger btn-sm w-100" onclick="removeGuru(${id})">×</button></div>
-                    </div>
-                </div>`;
+        const html = `<div class="guru-card" id="gc_${id}">
+                        <div class="row g-1">
+                            <div class="col-6"><input type="text" class="form-control form-control-sm inNamaG" placeholder="Nama Guru" oninput="sync()"></div>
+                            <div class="col-6"><input type="text" class="form-control form-control-sm inNIPG" placeholder="NIP" oninput="sync()"></div>
+                            <div class="col-10 mt-1"><input type="text" class="form-control form-control-sm inPangkatG" placeholder="Pangkat/Gol" oninput="sync()"></div>
+                            <div class="col-2 mt-1"><button class="btn btn-danger btn-sm w-100" onclick="removeGuru(${id})">×</button></div>
+                        </div>
+                    </div>`;
         document
           .getElementById("guruContainer")
           .insertAdjacentHTML("beforeend", html);
@@ -370,7 +415,6 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
                         <p><b><u>${head.namaK}</u></b><br>NIP. ${head.nipK}</p>
                     </div>
                 </div>
-
                 <div class="paper">
                     <table class="sppd-back-grid">
                         <tr>
@@ -387,10 +431,8 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
                     </table>
                 </div>`;
         });
-
         document.getElementById("renderArea").innerHTML = content;
       }
-
       window.onload = sync;
     </script>
   </body>
