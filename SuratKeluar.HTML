@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Surat Keluar - SMPN 3 Purwadadi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+      }
+
+      /* HEADER KOP */
+      .header-kop {
+        background: #1e3c72;
+        color: white;
+        padding: 15px;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .header-kop img {
+        height: 70px;
+        max-width: 100%;
+        object-fit: contain;
+      }
+
+      .header-kop .judul {
+        text-align: center;
+      }
+
+      .header-kop h2 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .header-kop p {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      /* RESPONSIF HP */
+      @media (max-width: 600px) {
+        .header-kop {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .header-kop img {
+          margin: 0 auto;
+          height: 60px;
+        }
+      }
+
+      .container {
+        padding: 20px;
+      }
+
+      form,
+      .rekap {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+      }
+
+      input,
+      select {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .btn-save {
+        background: #28a745;
+        color: white;
+      }
+      .btn-pdf {
+        background: #dc3545;
+        color: white;
+      }
+      .btn-edit {
+        background: #ffc107;
+      }
+      .btn-delete {
+        background: #6c757d;
+        color: white;
+      }
+
+      .action-bar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+      }
+
+      th,
+      td {
+        border: 1px solid #000;
+        padding: 5px;
+        font-size: 12px;
+        text-align: center;
+      }
+
+      th {
+        background: #e9ecef;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <header class="header-kop">
+      <img src="logo/subang.png" alt="Logo Kabupaten Subang" />
+      <div class="judul">
+        <h2>SURAT KELUAR</h2>
+        <p>SMP NEGERI 3 PURWADADI<br />KABUPATEN SUBANG</p>
+      </div>
+      <img src="logo/smpn3pwd.png" alt="Logo SMPN 3 Purwadadi" />
+    </header>
+
+    <div class="container">
+      <form id="formSurat">
+        <h3>Input Surat Keluar</h3>
+        <div class="form-grid">
+          <input type="number" id="no" placeholder="No Urut" required />
+          <input
+            type="text"
+            id="tujuan"
+            placeholder="Nama & Alamat Tujuan"
+            required
+          />
+          <input type="text" id="nomor" placeholder="Nomor Surat" required />
+          <input type="date" id="tanggal" required />
+          <input type="text" id="perihal" placeholder="Perihal" />
+          <input type="text" id="lampiran" placeholder="Lampiran" />
+          <input type="text" id="petunjuk" placeholder="Nomor Petunjuk" />
+          <input type="text" id="keterangan" placeholder="Keterangan" />
+        </div>
+        <br />
+        <button class="btn-save">Simpan</button>
+      </form>
+
+      <div class="rekap">
+        <h3>Rekap Bulanan</h3>
+        <div class="action-bar">
+          <select id="bulan"></select>
+          <select id="tahun"></select>
+          <select id="pilihData">
+            <option value="">-- Pilih Surat --</option>
+          </select>
+          <button class="btn-edit" onclick="editData()">Edit</button>
+          <button class="btn-delete" onclick="hapusData()">Hapus</button>
+          <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
+          <button
+            class="btn btn-primary btn-sppd"
+            onclick="window.location.href = 'sppd.html'"
+          >
+            Buat Surat Perjalanan Dinas
+          </button>
+        </div>
+      </div>
+
+      <div id="areaCetak">
+        <h3 style="text-align: center">REKAP SURAT KELUAR</h3>
+        <p style="text-align: center" id="judulRekap"></p>
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Tujuan</th>
+              <th>Nomor</th>
+              <th>Tanggal</th>
+              <th>Perihal</th>
+              <th>Lampiran</th>
+              <th>Petunjuk</th>
+              <th>Keterangan</th>
+            </tr>
+          </thead>
+          <tbody id="dataSurat"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      let data = JSON.parse(localStorage.getItem("suratKeluar")) || [];
+      let editIndex = null;
+
+      function render() {
+        dataSurat.innerHTML = "";
+        pilihData.innerHTML = '<option value="">-- Pilih Surat --</option>';
+        data.forEach((d, i) => {
+          dataSurat.innerHTML += `
+    <tr>
+      <td>${d.no}</td><td>${d.tujuan}</td><td>${d.nomor}</td>
+      <td>${d.tanggal}</td><td>${d.perihal}</td>
+      <td>${d.lampiran}</td><td>${d.petunjuk}</td><td>${d.keterangan}</td>
+    </tr>`;
+          pilihData.innerHTML += `<option value="${i}">${d.nomor} - ${d.tujuan}</option>`;
+        });
+        isiFilter();
+      }
+
+      formSurat.onsubmit = (e) => {
+        e.preventDefault();
+        const surat = {
+          no: no.value,
+          tujuan: tujuan.value,
+          nomor: nomor.value,
+          tanggal: tanggal.value,
+          perihal: perihal.value,
+          lampiran: lampiran.value,
+          petunjuk: petunjuk.value,
+          keterangan: keterangan.value,
+        };
+        editIndex === null ? data.push(surat) : (data[editIndex] = surat);
+        localStorage.setItem("suratKeluar", JSON.stringify(data));
+        editIndex = null;
+        e.target.reset();
+        render();
+      };
+
+      function editData() {
+        if (pilihData.value === "") return alert("Pilih data dulu");
+        editIndex = pilihData.value;
+        let d = data[editIndex];
+        no.value = d.no;
+        tujuan.value = d.tujuan;
+        nomor.value = d.nomor;
+        tanggal.value = d.tanggal;
+        perihal.value = d.perihal;
+        lampiran.value = d.lampiran;
+        petunjuk.value = d.petunjuk;
+        keterangan.value = d.keterangan;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function hapusData() {
+        if (pilihData.value === "") return alert("Pilih data dulu");
+        if (confirm("Yakin hapus data ini?")) {
+          data.splice(pilihData.value, 1);
+          localStorage.setItem("suratKeluar", JSON.stringify(data));
+          render();
+        }
+      }
+
+      function isiFilter() {
+        let bs = new Set(),
+          ts = new Set();
+        data.forEach((d) => {
+          let t = new Date(d.tanggal);
+          bs.add(t.getMonth());
+          ts.add(t.getFullYear());
+        });
+        bulan.innerHTML = "";
+        [...bs].forEach(
+          (b) =>
+            (bulan.innerHTML += `<option value="${b}">${new Date(0, b).toLocaleString("id", { month: "long" })}</option>`),
+        );
+        tahun.innerHTML = "";
+        [...ts].forEach((t) => (tahun.innerHTML += `<option>${t}</option>`));
+      }
+
+      async function downloadPDF() {
+        let b = bulan.value,
+          t = tahun.value;
+        let f = data.filter((d) => {
+          let x = new Date(d.tanggal);
+          return x.getMonth() == b && x.getFullYear() == t;
+        });
+        dataSurat.innerHTML = "";
+        f.forEach((d) => {
+          dataSurat.innerHTML += `
+    <tr>
+      <td>${d.no}</td><td>${d.tujuan}</td><td>${d.nomor}</td>
+      <td>${d.tanggal}</td><td>${d.perihal}</td>
+      <td>${d.lampiran}</td><td>${d.petunjuk}</td><td>${d.keterangan}</td>
+    </tr>`;
+        });
+        judulRekap.innerText = `Bulan ${new Date(0, b).toLocaleString("id", { month: "long" })} Tahun ${t}`;
+        const canvas = await html2canvas(areaCetak);
+        const img = canvas.toDataURL("image/png");
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+        pdf.addImage(img, "PNG", 5, 5, 200, 0);
+        pdf.save("Rekap_Surat_Keluar.pdf");
+        render();
+      }
+
+      render();
+    </script>
+  </body>
+</html>
