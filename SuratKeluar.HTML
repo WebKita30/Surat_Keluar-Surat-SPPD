@@ -40,31 +40,15 @@
         margin: 0;
         font-size: 22px;
       }
-
       .header-kop p {
         margin: 0;
         font-size: 14px;
       }
 
-      /* CONTAINER RESPONSIVE */
       .container {
         padding: 20px;
         max-width: 1200px;
         margin: 0 auto;
-      }
-
-      @media (max-width: 600px) {
-        .header-kop {
-          grid-template-columns: 1fr;
-          text-align: center;
-        }
-        .header-kop img {
-          margin: 0 auto;
-          height: 60px;
-        }
-        .container {
-          padding: 10px;
-        }
       }
 
       form,
@@ -100,34 +84,20 @@
         cursor: pointer;
         font-weight: bold;
         font-size: 14px;
-        transition: all 0.2s ease;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         text-decoration: none;
         gap: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      button:active,
-      .btn-sppd:active {
-        transform: scale(0.95);
-        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
       .btn-save {
         background: #28a745;
         color: white;
       }
-      .btn-save:hover {
-        background: #218838;
-      }
       .btn-pdf {
         background: #dc3545;
         color: white;
-      }
-      .btn-pdf:hover {
-        background: #c82333;
       }
       .btn-edit {
         background: #ffc107;
@@ -154,11 +124,10 @@
         margin-top: 15px;
       }
 
-      /* PEMBUNGKUS TABEL SUPAYA BISA DI-SCROLL DI HP */
+      /* TABEL RESPONSIVE (UNTUK TAMPILAN LAYAR) */
       .table-responsive {
         width: 100%;
-        overflow-x: auto; /* Fitur Utama Responsive */
-        -webkit-overflow-scrolling: touch;
+        overflow-x: auto;
         border: 1px solid #ddd;
         border-radius: 8px;
       }
@@ -166,13 +135,13 @@
       table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 800px; /* Memastikan kolom tidak penyok di HP */
+        min-width: 900px; /* Minimal lebar agar kolom tidak dempet di layar */
       }
 
       th,
       td {
         border: 1px solid #000;
-        padding: 10px 5px;
+        padding: 8px 4px;
         font-size: 12px;
         text-align: center;
         word-wrap: break-word;
@@ -180,43 +149,69 @@
 
       th {
         background: #f2f2f2;
-        text-transform: uppercase;
-      }
-      tr:nth-child(even) {
-        background-color: #fafafa;
       }
 
+      /* ==========================================
+         PENGATURAN CETAK (PRINT FIX)
+         ========================================== */
       @media print {
         @page {
-          size: 330mm 215mm;
-          margin: 15mm;
+          size: 330mm 215mm landscape; /* Kertas F4 Landscape */
+          margin: 10mm;
         }
-        body {
-          background: white;
-          margin: 0;
-          padding: 0;
-        }
+
+        /* Sembunyikan elemen yang tidak perlu diprint */
         .header-kop,
         #formSurat,
-        .rekap,
+        .rekap h3,
+        .action-bar,
         button,
         .btn-sppd {
           display: none !important;
         }
-        #areaCetak {
+
+        body {
+          background: white;
+        }
+        .container {
+          padding: 0;
           width: 100%;
-          border: none;
+          max-width: 100%;
+        }
+        .rekap {
           box-shadow: none;
+          padding: 0;
+          margin: 0;
         }
+
+        /* Supaya tabel tidak terpotong ke samping */
+        .table-responsive {
+          overflow: visible !important;
+          border: none !important;
+        }
+
         table {
-          width: 100%;
-          min-width: 100%;
-          font-size: 10pt;
+          width: 100% !important;
+          min-width: 100% !important; /* Memaksa tabel mengikuti lebar kertas */
+          table-layout: fixed; /* Penting: membagi kolom secara proporsional */
         }
+
         th,
         td {
+          font-size: 9pt; /* Ukuran font lebih kecil agar muat */
           border: 1px solid black !important;
         }
+
+        /* Atur lebar kolom agar No dan Tujuan tidak terbuang */
+        th:nth-child(1) {
+          width: 30px;
+        } /* Kolom No */
+        th:nth-child(2) {
+          width: 150px;
+        } /* Kolom Tujuan */
+        th:nth-child(3) {
+          width: 120px;
+        } /* Kolom Nomor Surat */
       }
     </style>
   </head>
@@ -262,12 +257,7 @@
           <select id="tahun" style="width: 100px"></select>
 
           <div
-            style="
-              width: 100%;
-              height: 1px;
-              border-bottom: 1px solid #eee;
-              margin: 10px 0;
-            "
+            style="width: 100%; border-bottom: 1px solid #eee; margin: 10px 0"
           ></div>
 
           <select id="pilihData">
@@ -299,11 +289,11 @@
                   <th style="width: 40px">No</th>
                   <th>Tujuan</th>
                   <th>Nomor Surat</th>
-                  <th style="width: 100px">Tanggal</th>
+                  <th style="width: 90px">Tanggal</th>
                   <th>Perihal</th>
                   <th>Lampiran</th>
                   <th>Petunjuk</th>
-                  <th>Keterangan</th>
+                  <th>Ket</th>
                 </tr>
               </thead>
               <tbody id="dataSurat"></tbody>
@@ -417,52 +407,38 @@
 
       async function downloadPDF() {
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF("l", "mm", [330, 215]);
+        const pdf = new jsPDF("l", "mm", [330, 215]); // Ukuran F4 Landscape
         const area = document.getElementById("areaCetak");
         const b = bulan.value;
         const t = tahun.value;
+
         let filterData = data.filter((d) => {
           let dt = new Date(d.tanggal);
           return dt.getMonth() == b && dt.getFullYear() == t;
         });
+
         if (filterData.length === 0)
           return alert("Tidak ada data di bulan/tahun ini");
 
-        dataSurat.innerHTML = "";
-        filterData.forEach((d) => {
-          dataSurat.innerHTML += `
-            <tr>
-              <td>${d.no}</td>
-              <td style="text-align: left;">${d.tujuan}</td>
-              <td>${d.nomor}</td>
-              <td>${d.tanggal}</td>
-              <td style="text-align: left;">${d.perihal}</td>
-              <td>${d.lampiran || "-"}</td>
-              <td>${d.petunjuk || "-"}</td>
-              <td>${d.keterangan || "-"}</td>
-            </tr>`;
-        });
         judulRekap.innerText = `Periode: ${new Date(0, b).toLocaleString("id", { month: "long" })} ${t}`;
 
+        // Clone area cetak agar tidak merusak tampilan asli
         const originalStyle = area.style.cssText;
-        area.style.width = "1200px";
-        area.style.background = "white";
-        const canvas = await html2canvas(area, {
-          scale: 2,
-          useCORS: true,
-          logging: false,
-        });
+        area.style.width = "1200px"; // Lebar tetap untuk canvas
+
+        const canvas = await html2canvas(area, { scale: 2, useCORS: true });
         const imgData = canvas.toDataURL("image/png");
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const margin = 10;
         const widthTersedia = pdfWidth - margin * 2;
         const imgHeight = (canvas.height * widthTersedia) / canvas.width;
+
         pdf.addImage(imgData, "PNG", margin, margin, widthTersedia, imgHeight);
         pdf.save(
-          `Rekap_Surat_F4_${new Date(0, b).toLocaleString("id", { month: "short" })}_${t}.pdf`,
+          `Rekap_Surat_${new Date(0, b).toLocaleString("id", { month: "short" })}_${t}.pdf`,
         );
+
         area.style.cssText = originalStyle;
-        render();
       }
 
       render();
