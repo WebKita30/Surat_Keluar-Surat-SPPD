@@ -46,64 +46,103 @@
         font-size: 14px;
       }
 
-      /* RESPONSIF HP */
+      /* CONTAINER RESPONSIVE */
+      .container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
       @media (max-width: 600px) {
         .header-kop {
           grid-template-columns: 1fr;
           text-align: center;
         }
-
         .header-kop img {
           margin: 0 auto;
           height: 60px;
         }
-      }
-
-      .container {
-        padding: 20px;
+        .container {
+          padding: 10px;
+        }
       }
 
       form,
       .rekap {
         background: white;
-        padding: 15px;
+        padding: 20px;
         border-radius: 8px;
         margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .form-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 10px;
+        gap: 15px;
       }
 
       input,
       select {
-        padding: 8px;
+        padding: 10px;
         border-radius: 5px;
         border: 1px solid #ccc;
+        width: 100%;
+        box-sizing: border-box;
       }
 
-      button {
-        padding: 8px 12px;
+      /* BUTTON STYLE */
+      button,
+      .btn-sppd {
+        padding: 10px 18px;
         border: none;
-        border-radius: 5px;
+        border-radius: 6px;
         cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        gap: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      button:active,
+      .btn-sppd:active {
+        transform: scale(0.95);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
       .btn-save {
         background: #28a745;
         color: white;
       }
+      .btn-save:hover {
+        background: #218838;
+      }
       .btn-pdf {
         background: #dc3545;
         color: white;
       }
+      .btn-pdf:hover {
+        background: #c82333;
+      }
       .btn-edit {
         background: #ffc107;
+        color: black;
       }
       .btn-delete {
         background: #6c757d;
+        color: white;
+      }
+      .btn-sppd {
+        background: #007bff;
+        color: white;
+      }
+      .btn-print {
+        background: #17a2b8;
         color: white;
       }
 
@@ -112,37 +151,84 @@
         gap: 10px;
         flex-wrap: wrap;
         align-items: center;
+        margin-top: 15px;
+      }
+
+      /* PEMBUNGKUS TABEL SUPAYA BISA DI-SCROLL DI HP */
+      .table-responsive {
+        width: 100%;
+        overflow-x: auto; /* Fitur Utama Responsive */
+        -webkit-overflow-scrolling: touch;
+        border: 1px solid #ddd;
+        border-radius: 8px;
       }
 
       table {
         width: 100%;
         border-collapse: collapse;
-        background: white;
+        min-width: 800px; /* Memastikan kolom tidak penyok di HP */
       }
 
       th,
       td {
         border: 1px solid #000;
-        padding: 5px;
+        padding: 10px 5px;
         font-size: 12px;
         text-align: center;
+        word-wrap: break-word;
       }
 
       th {
-        background: #e9ecef;
+        background: #f2f2f2;
+        text-transform: uppercase;
+      }
+      tr:nth-child(even) {
+        background-color: #fafafa;
+      }
+
+      @media print {
+        @page {
+          size: 330mm 215mm;
+          margin: 15mm;
+        }
+        body {
+          background: white;
+          margin: 0;
+          padding: 0;
+        }
+        .header-kop,
+        #formSurat,
+        .rekap,
+        button,
+        .btn-sppd {
+          display: none !important;
+        }
+        #areaCetak {
+          width: 100%;
+          border: none;
+          box-shadow: none;
+        }
+        table {
+          width: 100%;
+          min-width: 100%;
+          font-size: 10pt;
+        }
+        th,
+        td {
+          border: 1px solid black !important;
+        }
       }
     </style>
   </head>
 
   <body>
-    <!-- HEADER -->
     <header class="header-kop">
-      <img src="logo/subang.png" alt="Logo Kabupaten Subang" />
+      <img src="logo/subang.png" alt="Logo Subang" />
       <div class="judul">
         <h2>SURAT KELUAR</h2>
         <p>SMP NEGERI 3 PURWADADI<br />KABUPATEN SUBANG</p>
       </div>
-      <img src="logo/smpn3pwd.png" alt="Logo SMPN 3 Purwadadi" />
+      <img src="logo/smpn3pwd.png" alt="Logo SMP" />
     </header>
 
     <div class="container">
@@ -164,47 +250,66 @@
           <input type="text" id="keterangan" placeholder="Keterangan" />
         </div>
         <br />
-        <button class="btn-save">Simpan</button>
+        <button type="submit" class="btn-save">💾 Simpan Data</button>
       </form>
 
       <div class="rekap">
-        <h3>Rekap Bulanan</h3>
+        <h3>Kontrol Rekapitulasi</h3>
         <div class="action-bar">
-          <select id="bulan"></select>
-          <select id="tahun"></select>
+          <label>Bulan:</label>
+          <select id="bulan" style="width: 150px"></select>
+          <label>Tahun:</label>
+          <select id="tahun" style="width: 100px"></select>
+
+          <div
+            style="
+              width: 100%;
+              height: 1px;
+              border-bottom: 1px solid #eee;
+              margin: 10px 0;
+            "
+          ></div>
+
           <select id="pilihData">
-            <option value="">-- Pilih Surat --</option>
+            <option value="">-- Pilih Data untuk Edit/Hapus --</option>
           </select>
-          <button class="btn-edit" onclick="editData()">Edit</button>
-          <button class="btn-delete" onclick="hapusData()">Hapus</button>
-          <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
-          <button
-            class="btn btn-primary btn-sppd"
-            onclick="window.location.href = 'sppd.html'"
-          >
-            Buat Surat Perjalanan Dinas
-          </button>
+
+          <button class="btn-edit" onclick="editData()">✏️ Edit</button>
+          <button class="btn-delete" onclick="hapusData()">🗑️ Hapus</button>
+          <button class="btn-pdf" onclick="downloadPDF()">📄 PDF (F4)</button>
+          <button class="btn-print" onclick="window.print()">🖨️ Cetak</button>
+          <a href="sppd.html" class="btn-sppd">📝 Buat SPPD</a>
         </div>
       </div>
 
       <div id="areaCetak">
-        <h3 style="text-align: center">REKAP SURAT KELUAR</h3>
-        <p style="text-align: center" id="judulRekap"></p>
-        <table>
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Tujuan</th>
-              <th>Nomor</th>
-              <th>Tanggal</th>
-              <th>Perihal</th>
-              <th>Lampiran</th>
-              <th>Petunjuk</th>
-              <th>Keterangan</th>
-            </tr>
-          </thead>
-          <tbody id="dataSurat"></tbody>
-        </table>
+        <div id="innerCetak" style="padding: 10px">
+          <h2 style="text-align: center; margin-bottom: 5px">
+            REKAP SURAT KELUAR
+          </h2>
+          <h4
+            style="text-align: center; margin-top: 0; font-weight: normal"
+            id="judulRekap"
+          ></h4>
+
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 40px">No</th>
+                  <th>Tujuan</th>
+                  <th>Nomor Surat</th>
+                  <th style="width: 100px">Tanggal</th>
+                  <th>Perihal</th>
+                  <th>Lampiran</th>
+                  <th>Petunjuk</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody id="dataSurat"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -214,15 +319,22 @@
 
       function render() {
         dataSurat.innerHTML = "";
-        pilihData.innerHTML = '<option value="">-- Pilih Surat --</option>';
+        pilihData.innerHTML =
+          '<option value="">-- Pilih Data untuk Edit/Hapus --</option>';
+        data.sort((a, b) => a.no - b.no);
         data.forEach((d, i) => {
           dataSurat.innerHTML += `
-    <tr>
-      <td>${d.no}</td><td>${d.tujuan}</td><td>${d.nomor}</td>
-      <td>${d.tanggal}</td><td>${d.perihal}</td>
-      <td>${d.lampiran}</td><td>${d.petunjuk}</td><td>${d.keterangan}</td>
-    </tr>`;
-          pilihData.innerHTML += `<option value="${i}">${d.nomor} - ${d.tujuan}</option>`;
+            <tr>
+              <td>${d.no}</td>
+              <td style="text-align: left;">${d.tujuan}</td>
+              <td>${d.nomor}</td>
+              <td>${d.tanggal}</td>
+              <td style="text-align: left;">${d.perihal}</td>
+              <td>${d.lampiran || "-"}</td>
+              <td>${d.petunjuk || "-"}</td>
+              <td>${d.keterangan || "-"}</td>
+            </tr>`;
+          pilihData.innerHTML += `<option value="${i}">${d.no}. ${d.nomor} - ${d.tujuan}</option>`;
         });
         isiFilter();
       }
@@ -230,41 +342,48 @@
       formSurat.onsubmit = (e) => {
         e.preventDefault();
         const surat = {
-          no: no.value,
-          tujuan: tujuan.value,
-          nomor: nomor.value,
-          tanggal: tanggal.value,
-          perihal: perihal.value,
-          lampiran: lampiran.value,
-          petunjuk: petunjuk.value,
-          keterangan: keterangan.value,
+          no: document.getElementById("no").value,
+          tujuan: document.getElementById("tujuan").value,
+          nomor: document.getElementById("nomor").value,
+          tanggal: document.getElementById("tanggal").value,
+          perihal: document.getElementById("perihal").value,
+          lampiran: document.getElementById("lampiran").value,
+          petunjuk: document.getElementById("petunjuk").value,
+          keterangan: document.getElementById("keterangan").value,
         };
-        editIndex === null ? data.push(surat) : (data[editIndex] = surat);
+        if (editIndex === null) {
+          data.push(surat);
+        } else {
+          data[editIndex] = surat;
+          editIndex = null;
+        }
         localStorage.setItem("suratKeluar", JSON.stringify(data));
-        editIndex = null;
         e.target.reset();
         render();
+        alert("Data berhasil disimpan!");
       };
 
       function editData() {
-        if (pilihData.value === "") return alert("Pilih data dulu");
-        editIndex = pilihData.value;
+        let val = document.getElementById("pilihData").value;
+        if (val === "") return alert("Pilih data yang ingin diedit");
+        editIndex = val;
         let d = data[editIndex];
-        no.value = d.no;
-        tujuan.value = d.tujuan;
-        nomor.value = d.nomor;
-        tanggal.value = d.tanggal;
-        perihal.value = d.perihal;
-        lampiran.value = d.lampiran;
-        petunjuk.value = d.petunjuk;
-        keterangan.value = d.keterangan;
+        document.getElementById("no").value = d.no;
+        document.getElementById("tujuan").value = d.tujuan;
+        document.getElementById("nomor").value = d.nomor;
+        document.getElementById("tanggal").value = d.tanggal;
+        document.getElementById("perihal").value = d.perihal;
+        document.getElementById("lampiran").value = d.lampiran;
+        document.getElementById("petunjuk").value = d.petunjuk;
+        document.getElementById("keterangan").value = d.keterangan;
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
       function hapusData() {
-        if (pilihData.value === "") return alert("Pilih data dulu");
-        if (confirm("Yakin hapus data ini?")) {
-          data.splice(pilihData.value, 1);
+        let val = document.getElementById("pilihData").value;
+        if (val === "") return alert("Pilih data yang ingin dihapus");
+        if (confirm("Hapus data surat ini?")) {
+          data.splice(val, 1);
           localStorage.setItem("suratKeluar", JSON.stringify(data));
           render();
         }
@@ -275,41 +394,74 @@
           ts = new Set();
         data.forEach((d) => {
           let t = new Date(d.tanggal);
-          bs.add(t.getMonth());
-          ts.add(t.getFullYear());
+          if (!isNaN(t)) {
+            bs.add(t.getMonth());
+            ts.add(t.getFullYear());
+          }
         });
+        if (ts.size === 0) ts.add(new Date().getFullYear());
+        if (bs.size === 0) bs.add(new Date().getMonth());
         bulan.innerHTML = "";
-        [...bs].forEach(
-          (b) =>
-            (bulan.innerHTML += `<option value="${b}">${new Date(0, b).toLocaleString("id", { month: "long" })}</option>`),
-        );
+        [...bs]
+          .sort((a, b) => a - b)
+          .forEach((b) => {
+            bulan.innerHTML += `<option value="${b}">${new Date(0, b).toLocaleString("id", { month: "long" })}</option>`;
+          });
         tahun.innerHTML = "";
-        [...ts].forEach((t) => (tahun.innerHTML += `<option>${t}</option>`));
+        [...ts]
+          .sort((a, b) => a - b)
+          .forEach((t) => {
+            tahun.innerHTML += `<option value="${t}">${t}</option>`;
+          });
       }
 
       async function downloadPDF() {
-        let b = bulan.value,
-          t = tahun.value;
-        let f = data.filter((d) => {
-          let x = new Date(d.tanggal);
-          return x.getMonth() == b && x.getFullYear() == t;
-        });
-        dataSurat.innerHTML = "";
-        f.forEach((d) => {
-          dataSurat.innerHTML += `
-    <tr>
-      <td>${d.no}</td><td>${d.tujuan}</td><td>${d.nomor}</td>
-      <td>${d.tanggal}</td><td>${d.perihal}</td>
-      <td>${d.lampiran}</td><td>${d.petunjuk}</td><td>${d.keterangan}</td>
-    </tr>`;
-        });
-        judulRekap.innerText = `Bulan ${new Date(0, b).toLocaleString("id", { month: "long" })} Tahun ${t}`;
-        const canvas = await html2canvas(areaCetak);
-        const img = canvas.toDataURL("image/png");
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF("p", "mm", "a4");
-        pdf.addImage(img, "PNG", 5, 5, 200, 0);
-        pdf.save("Rekap_Surat_Keluar.pdf");
+        const pdf = new jsPDF("l", "mm", [330, 215]);
+        const area = document.getElementById("areaCetak");
+        const b = bulan.value;
+        const t = tahun.value;
+        let filterData = data.filter((d) => {
+          let dt = new Date(d.tanggal);
+          return dt.getMonth() == b && dt.getFullYear() == t;
+        });
+        if (filterData.length === 0)
+          return alert("Tidak ada data di bulan/tahun ini");
+
+        dataSurat.innerHTML = "";
+        filterData.forEach((d) => {
+          dataSurat.innerHTML += `
+            <tr>
+              <td>${d.no}</td>
+              <td style="text-align: left;">${d.tujuan}</td>
+              <td>${d.nomor}</td>
+              <td>${d.tanggal}</td>
+              <td style="text-align: left;">${d.perihal}</td>
+              <td>${d.lampiran || "-"}</td>
+              <td>${d.petunjuk || "-"}</td>
+              <td>${d.keterangan || "-"}</td>
+            </tr>`;
+        });
+        judulRekap.innerText = `Periode: ${new Date(0, b).toLocaleString("id", { month: "long" })} ${t}`;
+
+        const originalStyle = area.style.cssText;
+        area.style.width = "1200px";
+        area.style.background = "white";
+        const canvas = await html2canvas(area, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+        });
+        const imgData = canvas.toDataURL("image/png");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const margin = 10;
+        const widthTersedia = pdfWidth - margin * 2;
+        const imgHeight = (canvas.height * widthTersedia) / canvas.width;
+        pdf.addImage(imgData, "PNG", margin, margin, widthTersedia, imgHeight);
+        pdf.save(
+          `Rekap_Surat_F4_${new Date(0, b).toLocaleString("id", { month: "short" })}_${t}.pdf`,
+        );
+        area.style.cssText = originalStyle;
         render();
       }
 
