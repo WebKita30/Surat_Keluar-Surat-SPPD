@@ -22,7 +22,6 @@
         background: white;
         width: 210mm; /* Standar A4 */
         min-height: 296mm;
-        /* Padding atas dikurangi dari 15mm menjadi 5mm agar kop naik */
         padding: 5mm 20mm 15mm 20mm;
         margin: 20px auto;
         border: 1px solid #ccc;
@@ -39,7 +38,7 @@
         text-align: center;
         border-bottom: 3px solid black;
         padding-bottom: 5px;
-        margin-bottom: 2px; /* Margin bawah sangat kecil agar hemat ruang */
+        margin-bottom: 2px;
       }
       .logo-kop {
         width: 85px;
@@ -51,7 +50,7 @@
       .text-kop h5 {
         margin: 0;
         font-size: 16px;
-        line-height: 1.1; /* Line height dirapatkan */
+        line-height: 1.1;
         text-transform: uppercase;
       }
       .text-kop h4 {
@@ -66,35 +65,34 @@
         font-style: italic;
       }
 
-      /* BAGIAN SK INFO DENGAN WARNA BIRU */
       .sk-info {
         display: flex;
         justify-content: space-between;
         font-size: 10px;
         font-weight: bold;
-        border: 1px solid #0056b3; /* Garis biru tua */
-        padding: 4px 10px; /* Padding sedikit diperbesar agar warna terlihat bagus */
+        border: 1px solid #0056b3;
+        padding: 4px 10px;
         margin-bottom: 15px;
-        background-color: #cce5ff; /* Warna latar belakang biru muda sesuai gambar */
+        background-color: #cce5ff;
         color: #000;
       }
 
       /* TABEL & ISI SURAT */
       .isi-surat {
         font-size: 13pt;
-        line-height: 1.4; /* Sedikit dirapatkan */
+        line-height: 1.4;
         text-align: justify;
       }
 
       .table-resmi {
         width: 100%;
         border-collapse: collapse;
-        margin: 10px 0; /* Margin tabel dikurangi */
+        margin: 10px 0;
       }
       .table-resmi th,
       .table-resmi td {
         border: 1px solid black;
-        padding: 6px; /* Padding sel dikurangi sedikit */
+        padding: 6px;
         vertical-align: top;
         font-size: 11pt;
       }
@@ -116,11 +114,11 @@
       .ttd-container {
         float: right;
         width: 300px;
-        margin-top: 20px; /* Jarak ttd dikurangi agar muat */
+        margin-top: 20px;
         text-align: left;
       }
       .ttd-space {
-        height: 60px; /* Space ttd sedikit diperpendek */
+        height: 60px;
       }
 
       /* PANEL INPUT */
@@ -233,7 +231,9 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
           </div>
 
           <div class="col-md-4 border-end">
-            <label class="fw-bold small text-success">DAFTAR GURU</label>
+            <label class="fw-bold small text-success"
+              >DAFTAR PERSONEL (GURU/TU/BENDAHARA)</label
+            >
             <div id="guruContainer">
               <div class="guru-card" id="gc_0">
                 <div class="row g-1">
@@ -242,6 +242,7 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
                       type="text"
                       class="form-control form-control-sm inNamaG"
                       value="Acih Sugiarsih"
+                      placeholder="Nama"
                       oninput="sync()"
                     />
                   </div>
@@ -250,14 +251,25 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
                       type="text"
                       class="form-control form-control-sm inNIPG"
                       value="197606012008012006"
+                      placeholder="NIP"
                       oninput="sync()"
                     />
                   </div>
-                  <div class="col-10 mt-1">
+                  <div class="col-5 mt-1">
                     <input
                       type="text"
                       class="form-control form-control-sm inPangkatG"
                       value="Pembina Tingkat I, IV/b"
+                      placeholder="Golongan"
+                      oninput="sync()"
+                    />
+                  </div>
+                  <div class="col-5 mt-1">
+                    <input
+                      type="text"
+                      class="form-control form-control-sm inJabatanG"
+                      value="Guru"
+                      placeholder="Jabatan"
                       oninput="sync()"
                     />
                   </div>
@@ -276,7 +288,7 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
               class="btn btn-outline-success btn-sm w-100"
               onclick="addGuru()"
             >
-              + Tambah Guru
+              + Tambah Personel
             </button>
           </div>
 
@@ -286,7 +298,7 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
             </button>
             <button
               class="btn btn-outline-secondary btn-sm"
-              onclick="window.location.href = 'SuratKeluar.HTML'"
+              onclick="alert('Kembali ke menu...')"
             >
               ⬅️ KEMBALI
             </button>
@@ -298,18 +310,21 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
     <div id="renderArea"></div>
 
     <script>
+      // Set Tanggal Hari Ini
       document.getElementById("inTglCetak").valueAsDate = new Date();
 
       function addGuru() {
         const id = Date.now();
-        const html = `<div class="guru-card" id="gc_${id}">
+        const html = `
+          <div class="guru-card" id="gc_${id}">
             <div class="row g-1">
-                <div class="col-6"><input type="text" class="form-control form-control-sm inNamaG" placeholder="Nama Guru" oninput="sync()"></div>
-                <div class="col-6"><input type="text" class="form-control form-control-sm inNIPG" placeholder="NIP" oninput="sync()"></div>
-                <div class="col-10 mt-1"><input type="text" class="form-control form-control-sm inPangkatG" placeholder="Pangkat/Gol" oninput="sync()"></div>
-                <div class="col-2 mt-1"><button class="btn btn-danger btn-sm w-100" onclick="removeGuru(${id})">×</button></div>
+              <div class="col-6"><input type="text" class="form-control form-control-sm inNamaG" placeholder="Nama" oninput="sync()"></div>
+              <div class="col-6"><input type="text" class="form-control form-control-sm inNIPG" placeholder="NIP" oninput="sync()"></div>
+              <div class="col-5 mt-1"><input type="text" class="form-control form-control-sm inPangkatG" placeholder="Gol" oninput="sync()"></div>
+              <div class="col-5 mt-1"><input type="text" class="form-control form-control-sm inJabatanG" placeholder="Jabatan" value="Guru" oninput="sync()"></div>
+              <div class="col-2 mt-1"><button class="btn btn-danger btn-sm w-100" onclick="removeGuru(${id})">×</button></div>
             </div>
-        </div>`;
+          </div>`;
         document
           .getElementById("guruContainer")
           .insertAdjacentHTML("beforeend", html);
@@ -362,19 +377,30 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
         const names = document.querySelectorAll(".inNamaG");
         const nips = document.querySelectorAll(".inNIPG");
         const pangkats = document.querySelectorAll(".inPangkatG");
+        const jabatans = document.querySelectorAll(".inJabatanG");
 
         let content = "";
 
         // --- HALAMAN 1: SURAT TUGAS ---
         let rows = "";
         names.forEach((n, i) => {
-          rows += `<tr class="text-center"><td>${i + 1}</td><td style="text-align:left"><b>${n.value}</b></td><td>${nips[i].value}</td><td>${pangkats[i].value}</td><td>Guru</td></tr>`;
+          rows += `
+            <tr class="text-center">
+              <td>${i + 1}</td>
+              <td style="text-align:left"><b>${n.value}</b></td>
+              <td>${nips[i].value}</td>
+              <td>${pangkats[i].value}</td>
+              <td>${jabatans[i].value}</td>
+            </tr>`;
         });
 
         content += `
         <div class="paper">
             ${getKopHTML()}
-            <div class="text-center mt-2"><h5 class="fw-bold text-decoration-underline mb-0" style="font-size:16pt">SURAT TUGAS</h5><p style="font-size:12pt">Nomor : ${head.nomor}</p></div>
+            <div class="text-center mt-2">
+              <h5 class="fw-bold text-decoration-underline mb-0" style="font-size:16pt">SURAT TUGAS</h5>
+              <p style="font-size:12pt">Nomor : ${head.nomor}</p>
+            </div>
             <div class="isi-surat mt-3">
                 <p>Berkaitan dengan Kegiatan <b>${head.kegiatan}</b>, yang bertanda tangan di bawah ini :</p>
                 <table style="margin-left: 30px; margin-bottom: 10px;">
@@ -383,9 +409,17 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
                     <tr><td>Pangkat/Golongan</td><td>: ${head.pangkatK}</td></tr>
                     <tr><td>Jabatan</td><td>: Kepala Sekolah</td></tr>
                 </table>
-                <p>Dengan ini menugaskan kepada nama-nama berikut ini :</p>
+                <p>Dengan ini menugaskan kepada personel berikut ini :</p>
                 <table class="table-resmi">
-                    <thead class="text-center"><tr><th>No</th><th>Nama</th><th>NIP/NUPTK</th><th>Pangkat/Golongan</th><th>Jabatan</th></tr></thead>
+                    <thead class="text-center">
+                      <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>NIP/NUPTK</th>
+                        <th>Pangkat/Golongan</th>
+                        <th>Jabatan</th>
+                      </tr>
+                    </thead>
                     <tbody>${rows}</tbody>
                 </table>
                 <p class="mt-3">Untuk melaksanakan tugas dalam kegiatan <b>${head.kegiatan}</b> yang bertempat di ${head.tujuan}. Demikian Surat Tugas ini saya sampaikan untuk dilaksanakan dengan sebaik-baiknya.</p>
@@ -407,7 +441,7 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
               <table class="table-resmi mt-3">
                   <tr><td width="5%" class="text-center">1</td><td width="45%">Pejabat yang memberi perintah</td><td>Kepala SMP Negeri 3 Purwadadi</td></tr>
                   <tr><td class="text-center">2</td><td>Nama / NIP Pegawai yang diperintah</td><td><b>${n.value}</b><br>NIP. ${nips[i].value}</td></tr>
-                  <tr><td class="text-center">3</td><td>a. Jabatan dan Golongan<br>b. Jabatan/Instansi<br>c. Tingkat Biaya Perjalanan</td><td>a. ${pangkats[i].value}<br>b. SMP Negeri 3 Purwadadi<br>c. -</td></tr>
+                  <tr><td class="text-center">3</td><td>a. Jabatan dan Golongan<br>b. Jabatan/Instansi<br>c. Tingkat Biaya Perjalanan</td><td>a. ${jabatans[i].value} / ${pangkats[i].value}<br>b. SMP Negeri 3 Purwadadi<br>c. -</td></tr>
                   <tr><td class="text-center">4</td><td>Maksud Perjalanan Dinas</td><td>${head.kegiatan}</td></tr>
                   <tr><td class="text-center">5</td><td>Alat Angkut yang dipergunakan</td><td>Kendaraan Umum/Dinas</td></tr>
                   <tr><td class="text-center">6</td><td>a. Tempat Berangkat<br>b. Tempat Tujuan</td><td>a. SMP Negeri 3 Purwadadi<br>b. ${head.tujuan}</td></tr>
@@ -423,20 +457,22 @@ Program READER berbantuan AI pada Pembelajaran Mendalam</textarea
               <table class="sppd-back-grid">
                   <tr>
                       <td>I. Berangkat Dari : SMPN 3 Purwadadi<br>Pada Tanggal : ${head.tgl}<br>Kepala Sekolah,<div class="ttd-space"></div><b>${head.namaK}</b><br>NIP. ${head.nipK}</td>
-                      <td>Tiba di : ${head.tujuan}<br>Pada Tanggal : ${head.tgl}<br><br><br><br><br><br>( ................................................. )<br>NIP. </td>
+                      <td>Tiba di : ${head.tujuan}<br>Pada Tanggal : ${head.tgl}<br><br><br><br><br>( ................................................. )<br>NIP. </td>
                   </tr>
                   <tr>
-                      <td>II. Berangkat dari : ${head.tujuan}<br>Pada Tanggal : ${head.tgl}<br><br><br><br><br><br>( ................................................. )<br>NIP. </td>
+                      <td>II. Berangkat dari : ${head.tujuan}<br>Pada Tanggal : ${head.tgl}<br><br><br><br><br>( ................................................. )<br>NIP. </td>
                       <td>Tiba di : SMPN 3 Purwadadi<br>Pada Tanggal : ${head.tgl}<br>Kepala Sekolah,<div class="ttd-space"></div><b>${head.namaK}</b><br>NIP. ${head.nipK}</td>
                   </tr>
                   <tr>
-                      <td colspan="2" style="height: 120px;">III. Telah diperiksa dengan keterangan bahwa perjalanan tersebut atas perintahnya dan semata-mata untuk kepentingan jabatan dalam waktu yang sesingkat-singkatnya.<br><br>Pejabat Pelaksana Teknis Kegiatan,<br><br><br>( ................................................. )<br>NIP. </td>
+                      <td colspan="2" style="height: 120px;">III. Telah diperiksa dengan keterangan bahwa perjalanan tersebut atas perintahnya dan semata-mata untuk kepentingan jabatan dalam waktu yang sesingkat-singkatnya.<br><br>Pejabat Pelaksana Teknis Kegiatan,<br><br><br><br>( ................................................. )<br>NIP. </td>
                   </tr>
               </table>
           </div>`;
         });
         document.getElementById("renderArea").innerHTML = content;
       }
+
+      // Jalankan sync saat pertama kali load
       window.onload = sync;
     </script>
   </body>
